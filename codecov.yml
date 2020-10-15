@@ -1,4 +1,4 @@
 ignore:
-  - "generated/"
+  - "src/parser"
   - "test/"
-  - "third_party"
+  - ".xmake"

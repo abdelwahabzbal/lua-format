@@ -1,12 +1,12 @@
 #include <any>
-#include <args/args.hxx>
+#include <args.hxx>
 #include <cstdlib>
 #include <fstream>
-#include <iterator>
 #include <iostream>
+#include <iterator>
 
 #include "Config.h"
-#include "lua-format.h"
+#include "LuaFormat.h"
 
 int main(int argc, const char* argv[]) {
     args::ArgumentParser parser("Reformats your Lua source code.", "");

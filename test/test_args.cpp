@@ -1,9 +1,9 @@
-#include <args/args.hxx>
-#include <catch2/catch.hpp>
+#include <args.hxx>
+#include <catch.hpp>
 #include <iostream>
 #include <tuple>
 
-#include "lua-format.h"
+#include "LuaFormat.h"
 
 TEST_CASE("indent with args", "[args]") {
     Config config;

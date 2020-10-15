@@ -326,7 +326,6 @@ ASALocalRun/
 *.nvuser
 
 # CMake
-
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
@@ -337,8 +336,6 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 src/ConfigCheck.h
-
-# C++
 
 # Prerequisites
 *.d
@@ -367,8 +364,10 @@ src/ConfigCheck.h
 *.app
 
 # Project-specific
-.vscode/
 .DS_Store
+.vscode/
+.xmake/
+build/*
 
 # Lua rocks
 build.luarocks
