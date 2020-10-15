@@ -367,7 +367,7 @@ src/ConfigCheck.h
 .DS_Store
 .vscode/
 .xmake/
-build/*
+build/
 
 # Lua rocks
 build.luarocks
