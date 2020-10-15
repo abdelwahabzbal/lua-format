@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Config.h"
 #include "LuaBaseVisitor.h"
 #include "LuaParser.h"
-#include "SourceWriter.h"
+#include "config.h"
+#include "writer.h"
 
 using namespace std;
 using namespace antlr4;

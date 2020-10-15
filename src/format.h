@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-#include "Config.h"
+#include "config.h"
 
 using namespace std;
 

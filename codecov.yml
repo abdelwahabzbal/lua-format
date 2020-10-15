@@ -1,4 +1,0 @@
-ignore:
-  - "src/parser"
-  - "test/"
-  - ".xmake"

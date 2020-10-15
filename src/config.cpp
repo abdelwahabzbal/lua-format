@@ -1,4 +1,4 @@
-#include "Config.h"
+#include "config.h"
 
 #include <assert.h>
 
@@ -76,11 +76,15 @@ Config::Config() {
         bool value = std::any_cast<bool>(elem);
         if (key == "double_quote_to_single_quote") {
             if (value && (node_["single_quote_to_double_quote"]).as<bool>()) {
-                throw logic_error("[ERROR] Configuration value of double_quote_to_single_quote is conflicting with the value of single_quote_to_double_quote");
+                throw logic_error(
+                    "[ERROR] Configuration value of double_quote_to_single_quote is conflicting with the value of "
+                    "single_quote_to_double_quote");
             }
         } else if (key == "single_quote_to_double_quote") {
             if (value && (node_["double_quote_to_single_quote"]).as<bool>()) {
-                throw logic_error("[ERROR] Configuration value of single_quote_to_double_quote is conflicting with the value of double_quote_to_single_quote");
+                throw logic_error(
+                    "[ERROR] Configuration value of single_quote_to_double_quote is conflicting with the value of "
+                    "double_quote_to_single_quote");
             }
         }
         return value;

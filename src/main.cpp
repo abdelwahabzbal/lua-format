@@ -5,8 +5,8 @@
 #include <iostream>
 #include <iterator>
 
-#include "Config.h"
-#include "LuaFormat.h"
+#include "config.h"
+#include "format.h"
 
 int main(int argc, const char* argv[]) {
     args::ArgumentParser parser("Reformats your Lua source code.", "");

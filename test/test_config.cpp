@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include "LuaFormat.h"
+#include "format.h"
 
 TEST_CASE("indent", "config") {
     Config config;

@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "FormatVisitor.h"
 #include "LuaLexer.h"
+#include "visitor.h"
 
 using namespace std;
 using namespace antlr4;
