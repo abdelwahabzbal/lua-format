@@ -24,7 +24,7 @@ add_includedirs("src", "src/parser", repo .. "args", repo .. "yaml/include",
 
 target("test")
 set_kind("binary")
-add_cxxflags("-std=c++17", "-fuse-ld=lld", "-fpermissive", {force = true})
+add_cxxflags("-std=c++17", "-fuse-ld=lld", {force = true})
 add_files("test/**.cpp", "src/**.cpp", repo .. "yaml/src/**.cpp",
           repo .. "antlr/runtime/Cpp/runtime/src/**.cpp")
 del_files("src/main.cpp")

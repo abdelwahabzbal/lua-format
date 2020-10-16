@@ -10,11 +10,11 @@
 
 int main(int argc, const char* argv[]) {
     args::ArgumentParser parser("Reformats your Lua source code.", "");
-    args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
+    args::HelpFlag help(parser, "help", "Display help menu", {'h', "help"});
     args::Group dc(parser, "", args::Group::Validators::DontCare);
     args::Flag verbose(dc, "verbose", "Turn on verbose mode", {'v', "verbose"});
     args::Flag inplace(dc, "in-place", "Reformats in-place", {'i'});
-    args::Flag dumpcfg(dc, "dump current style", "Dumps the default style used to stdout", {"dump-config"});
+    args::Flag dumpcfg(dc, "dump current style", "Dumps the default style used to stdout", {'d', "dump-config"});
     args::ValueFlag<string> cFile(parser, "file", "Style config file", {'c', "config"});
     args::ValueFlag<int> columnlimit(parser, "column limit", "Column limit of one line", {"column-limit"});
     args::ValueFlag<int> indentwidth(parser, "indentation width", "Number of spaces used for indentation",
