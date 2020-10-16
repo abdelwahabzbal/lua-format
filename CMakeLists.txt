@@ -10,10 +10,10 @@ add_executable(test "")
 set_target_properties(test PROPERTIES OUTPUT_NAME "test")
 set_target_properties(test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "build/linux/x86_64/debug")
 target_include_directories(test PRIVATE
-    build/parser
+    src
+    src/parser
     .xmake/linux/x86_64/repositories/yaml/include
     .xmake/linux/x86_64/repositories/antlr/runtime/Cpp/runtime/src
-    src
     .xmake/linux/x86_64/repositories/args
     .xmake/linux/x86_64/repositories/catch/include
     /usr/local/include
@@ -42,6 +42,10 @@ target_sources(test PRIVATE
     test/test_validation.cpp
     src/config.cpp
     src/visitor.cpp
+    src/parser/LuaParser.cpp
+    src/parser/LuaBaseVisitor.cpp
+    src/parser/LuaVisitor.cpp
+    src/parser/LuaLexer.cpp
     src/format.cpp
     .xmake/linux/x86_64/repositories/yaml/src/singledocparser.cpp
     .xmake/linux/x86_64/repositories/yaml/src/stream.cpp
@@ -222,10 +226,6 @@ target_sources(test PRIVATE
     .xmake/linux/x86_64/repositories/antlr/runtime/Cpp/runtime/src/NoViableAltException.cpp
     .xmake/linux/x86_64/repositories/antlr/runtime/Cpp/runtime/src/ListTokenSource.cpp
     .xmake/linux/x86_64/repositories/antlr/runtime/Cpp/runtime/src/InputMismatchException.cpp
-    build/parser/LuaParser.cpp
-    build/parser/LuaBaseVisitor.cpp
-    build/parser/LuaVisitor.cpp
-    build/parser/LuaLexer.cpp
 )
 
 # target
@@ -234,7 +234,7 @@ set_target_properties(lua-format PROPERTIES OUTPUT_NAME "lua-format")
 set_target_properties(lua-format PROPERTIES RUNTIME_OUTPUT_DIRECTORY "build/linux/x86_64/debug")
 target_include_directories(lua-format PRIVATE
     src
-    build/parser
+    src/parser
     .xmake/linux/x86_64/repositories/args
     .xmake/linux/x86_64/repositories/yaml/include
     .xmake/linux/x86_64/repositories/antlr/runtime/Cpp/runtime/src
@@ -257,6 +257,10 @@ target_link_options(lua-format PRIVATE
 target_sources(lua-format PRIVATE
     src/config.cpp
     src/visitor.cpp
+    src/parser/LuaParser.cpp
+    src/parser/LuaBaseVisitor.cpp
+    src/parser/LuaVisitor.cpp
+    src/parser/LuaLexer.cpp
     src/main.cpp
     src/format.cpp
     .xmake/linux/x86_64/repositories/antlr/runtime/Cpp/runtime/src/ANTLRInputStream.cpp
@@ -438,9 +442,5 @@ target_sources(lua-format PRIVATE
     .xmake/linux/x86_64/repositories/yaml/src/contrib/graphbuilderadapter.cpp
     .xmake/linux/x86_64/repositories/yaml/src/emitfromevents.cpp
     .xmake/linux/x86_64/repositories/yaml/src/depthguard.cpp
-    build/parser/LuaParser.cpp
-    build/parser/LuaBaseVisitor.cpp
-    build/parser/LuaVisitor.cpp
-    build/parser/LuaLexer.cpp
 )
 
