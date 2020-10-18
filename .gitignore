@@ -367,6 +367,7 @@ src/ConfigCheck.h
 .DS_Store
 .vscode/
 .xmake/
+.clangd/
 build/
 
 # Lua rocks
