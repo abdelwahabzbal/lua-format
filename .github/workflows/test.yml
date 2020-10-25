@@ -15,8 +15,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: run-cmake
-        uses: lukka/run-cmake@v3.1
-    - run: xmake repo --update
-           xmake build test
-           xmake run test
+    - uses: xmake-io/github-action-setup-xmake@v1
+      with:
+      xmake-version: latest
+    - run: |
+        xmake repo --update
+        xmake build test
+        xmake run test
