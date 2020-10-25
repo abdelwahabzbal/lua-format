@@ -16,8 +16,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: xmake-io/github-action-setup-xmake@v1
-      with:
-      xmake-version: latest
     - run: |
         xmake repo --update
         xmake build test
