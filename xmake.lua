@@ -1,7 +1,7 @@
-add_repositories("antlr https://github.com/antlr/antlr4.git")
-add_repositories("args https://github.com/Taywee/args.git")
-add_repositories("yaml https://github.com/jbeder/yaml-cpp.git")
-add_repositories("catch https://github.com/catchorg/Catch2.git")
+-- add_repositories("antlr https://github.com/antlr/antlr4.git")
+-- add_repositories("args https://github.com/Taywee/args.git")
+-- add_repositories("yaml https://github.com/jbeder/yaml-cpp.git")
+-- add_repositories("catch https://github.com/catchorg/Catch2.git")
 
 local repo = "$(configdir)/repositories/"
 

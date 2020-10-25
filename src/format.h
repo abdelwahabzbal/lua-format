@@ -7,7 +7,8 @@
 
 using namespace std;
 
-#define PROJECT_PATH string("lua-format")
+std::string get_current_dir();
+#define PROJECT_PATH get_current_dir()
 
 string lua_format(const string& input, const Config& config);
 string lua_format(istream& stream, const Config& config);

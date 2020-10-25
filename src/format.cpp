@@ -6,6 +6,17 @@
 using namespace std;
 using namespace antlr4;
 
+// TODO: check for other operating systems
+#include <unistd.h>
+#define cwd getcwd
+
+std::string get_current_dir() {
+    char buff[FILENAME_MAX];
+    cwd(buff, FILENAME_MAX);
+    string current_working_dir(buff);
+    return current_working_dir;
+}
+
 static string __format(ANTLRInputStream& input, const Config& config) {
     LuaLexer lexer(&input);
     CommonTokenStream tokenstream(&lexer);

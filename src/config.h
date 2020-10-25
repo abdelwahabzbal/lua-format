@@ -2,7 +2,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-#define HAVE_FILESYSTEM_H 1  // Fix: check for c++17 filesystem header
+#define HAVE_FILESYSTEM_H 0  // Fix: check for c++17 filesystem header
 
 #ifdef HAVE_FILESYSTEM_H
 #include <filesystem>
