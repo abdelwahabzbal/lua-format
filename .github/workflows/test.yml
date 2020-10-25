@@ -17,6 +17,9 @@ jobs:
     - uses: actions/checkout@v2
     - uses: xmake-io/github-action-setup-xmake@v1
     - run: |
-        xmake repo --update
+        xmake repo --add antlr https://github.com/antlr/antlr4.git master
+        xmake repo --add args https://github.com/Taywee/args.git master
+        xmake repo --add yaml https://github.com/jbeder/yaml-cpp.git master
+        xmake repo --add catch https://github.com/catchorg/Catch2.git master
         xmake build test
         xmake run test
