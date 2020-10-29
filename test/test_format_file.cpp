@@ -19,7 +19,7 @@ using namespace std;
         string expectFileName = filename.substr(0, idx) + "/_" + filename.substr(idx + 1, filename.size()); \
         idx = filename.find_last_of('.');                                                                   \
         string configFileName = filename.substr(0, idx) + ".config";                                        \
-        if (fs::exists(configFileName)) {                                                                   \
+        if (std::filesystem::exists(configFileName)) {                                                                   \
             std::cout << configFileName << " exist" << endl;                                                \
             config.readFromFile(configFileName);                                                            \
             std::cout << config.get<bool>("chop_down_parameter") << " dd" << endl;                          \

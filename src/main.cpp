@@ -296,14 +296,14 @@ int main(int argc, const char* argv[]) {
 
     // Automatically look for a .lua-format on the current directory
     if (configFileName.empty()) {
-        fs::path current = fs::current_path();
+        std::filesystem::path current = std::filesystem::current_path();
         while (configFileName.empty()) {
-            for (auto& entry : fs::directory_iterator(current)) {
-                fs::path candidate = entry.path();
+            for (auto& entry : std::filesystem::directory_iterator(current)) {
+                std::filesystem::path candidate = entry.path();
                 if (candidate.filename() == ".lua-format") configFileName = candidate.string();
             }
 
-            fs::path parent = current.parent_path();
+            std::filesystem::path parent = current.parent_path();
             if (current == parent) {
                 break;
             }
@@ -322,7 +322,7 @@ int main(int argc, const char* argv[]) {
         }
         if (!conf_dir.empty()) {
             string candidate = conf_dir + "/luaformatter/config.yaml";
-            if (fs::exists(candidate)) configFileName = candidate;
+            if (std::filesystem::exists(candidate)) configFileName = candidate;
         }
     }
 #endif
@@ -334,7 +334,7 @@ int main(int argc, const char* argv[]) {
         if (verbose) cerr << "using configuration file: " << configFileName << endl;
     }
 
-    if (fs::exists(configFileName)) {
+    if (std::filesystem::exists(configFileName)) {
         // Keeps the default values in case the yaml is missing a field
         try {
             config.readFromFile(configFileName);
@@ -378,21 +378,21 @@ use_default:
             if (verbose) {
                 cerr << "formatting: " << fileName << endl;
             }
-            if (fs::exists(fileName)) {
-                fs::file_status status = fs::status(fileName);
-                fs::perms perm = status.permissions();
+            if (std::filesystem::exists(fileName)) {
+                std::filesystem::file_status status = std::filesystem::status(fileName);
+                std::filesystem::perms perm = status.permissions();
 
-                if (!fs::is_regular_file(status)) {
+                if (!std::filesystem::is_regular_file(status)) {
                     cerr << fileName << ": Not a file." << endl;
                     continue;
                 }
 
-                if ((perm & fs::perms::owner_read) == fs::perms::none) {
+                if ((perm & std::filesystem::perms::owner_read) == std::filesystem::perms::none) {
                     cerr << fileName << ": No access to read." << endl;
                     continue;
                 }
 
-                if (inplace && (perm & fs::perms::owner_write) == fs::perms::none) {
+                if (inplace && (perm & std::filesystem::perms::owner_write) == std::filesystem::perms::none) {
                     cerr << fileName << ": No access to write." << endl;
                     continue;
                 }

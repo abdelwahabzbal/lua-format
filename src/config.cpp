@@ -105,6 +105,7 @@ Config::Config() {
         }
         return value;
     };
+
     validators["spaces_before_call"] = validate_integer_zero;
     validators["column_limit"] = validate_integer;
     validators["indent_width"] = validate_integer_zero;
@@ -162,15 +163,15 @@ Config::Config() {
 }
 
 void Config::readFromFile(const string &file) {
-    fs::file_status status = fs::status(file);
-    fs::perms perm = status.permissions();
+    std::filesystem::file_status status = std::filesystem::status(file);
+    std::filesystem::perms perm = status.permissions();
 
-    if (!fs::is_regular_file(status)) {
+    if (!std::filesystem::is_regular_file(status)) {
         cerr << file << ": Not a file." << endl;
         exit(-1);
     }
 
-    if ((perm & fs::perms::owner_read) == fs::perms::none) {
+    if ((perm & std::filesystem::perms::owner_read) == std::filesystem::perms::none) {
         cerr << file << ": No access to read." << endl;
         exit(-1);
     }
@@ -246,5 +247,4 @@ void Config::readFromMap(map<string, any> &mp) {
 }
 
 void Config::dumpCurrent(ofstream &fout) { fout << node_ << endl; }
-
 void Config::dumpCurrent(ostream &out) { out << node_ << endl; }

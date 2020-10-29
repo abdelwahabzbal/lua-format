@@ -1,7 +1,7 @@
--- add_repositories("antlr https://github.com/antlr/antlr4.git")
--- add_repositories("args https://github.com/Taywee/args.git")
--- add_repositories("yaml https://github.com/jbeder/yaml-cpp.git")
--- add_repositories("catch https://github.com/catchorg/Catch2.git")
+add_repositories("antlr https://github.com/antlr/antlr4.git")
+add_repositories("args https://github.com/Taywee/args.git")
+add_repositories("yaml https://github.com/jbeder/yaml-cpp.git")
+add_repositories("catch https://github.com/catchorg/Catch2.git")
 
 local repo = "$(configdir)/repositories/"
 
@@ -29,5 +29,5 @@ add_files("test/**.cpp", "src/**.cpp", repo .. "yaml/src/**.cpp",
           repo .. "antlr/runtime/Cpp/runtime/src/**.cpp")
 del_files("src/main.cpp")
 add_includedirs("src", "src/parser", repo .. "yaml/include",
-                repo .. "antlr/runtime/Cpp/runtime/src", "src", repo .. "args",
+                repo .. "antlr/runtime/Cpp/runtime/src", repo .. "args",
                 repo .. "catch/include")
