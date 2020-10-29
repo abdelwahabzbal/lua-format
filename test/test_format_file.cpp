@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "format.h"
+#include "config.h"
 
 using namespace std;
 

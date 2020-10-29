@@ -1,4 +1,4 @@
-name: lua-format
+name: test
 
 on:
   push:
@@ -22,4 +22,4 @@ jobs:
         xmake repo --add yaml https://github.com/jbeder/yaml-cpp.git master
         xmake repo --add catch https://github.com/catchorg/Catch2.git devel
         xmake build test
-        xmake run test
+        xmake run --workdir=. test
