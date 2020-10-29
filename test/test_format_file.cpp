@@ -1,14 +1,11 @@
-#include <catch.hpp>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include <catch.hpp>
 #include "format.h"
-#include "config.h"
-
-using namespace std;
 
 #define TEST_FILE(file)                                                                                     \
     TEST_CASE("format file " + string(file) + " works well", "format_file") {                               \
