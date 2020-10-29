@@ -6,6 +6,7 @@
 
 #include <catch.hpp>
 #include "format.h"
+#include "config.h"
 
 #define TEST_FILE(file)                                                                                     \
     TEST_CASE("format file " + string(file) + " works well", "format_file") {                               \
