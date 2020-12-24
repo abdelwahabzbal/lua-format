@@ -16,11 +16,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: xmake-io/github-action-setup-xmake@v1
+    - uses: KyleMayes/install-llvm-action@v1
     - run: |
         xmake repo --add antlr https://github.com/antlr/antlr4.git master
         xmake repo --add args https://github.com/Taywee/args.git master
         xmake repo --add yaml https://github.com/jbeder/yaml-cpp.git master
         xmake repo --add catch https://github.com/catchorg/Catch2.git devel
-        xmake config --cxxflags='-std=c++17'
+        xmake config --toolchain=clang --cxxflags='-std=c++17'
         xmake build test
         xmake run --workdir=. test
