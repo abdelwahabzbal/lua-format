@@ -368,6 +368,7 @@ src/ConfigCheck.h
 .vscode/
 .xmake/
 .clangd/
+.cache/
 build/
 
 # Lua rocks
