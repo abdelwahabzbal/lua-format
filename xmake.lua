@@ -5,15 +5,6 @@ add_repositories("catch https://github.com/catchorg/Catch2.git")
 
 local repo = "$(configdir)/repositories/"
 
-before_build(function()
-    if not os.exists("src/parser") then
-        os.execv("antlr4", {
-            "-Dlanguage=Cpp", "-no-listener", "-visitor", "-o", "src/parser",
-            "Lua.g4"
-        })
-    end
-end)
-
 target("lua-format")
 set_kind("binary")
 add_cxxflags("-std=c++17", "-fuse-ld=lld", {force = true})
