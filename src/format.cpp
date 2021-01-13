@@ -63,12 +63,16 @@ vector<pair<size_t, size_t>> findBlocksBetweenFormatSwitch(const string& str) {
     return blocks;
 }
 
-string resetContentInDisableFormatBlocks(const string& original, const string& formatted) {
-    vector<pair<size_t, size_t>> originalBlocks = findBlocksBetweenFormatSwitch(original);
-    vector<pair<size_t, size_t>> formattedBlocks = findBlocksBetweenFormatSwitch(formatted);
+string resetContentInDisableFormatBlocks(const string& original,
+                                         const string& formatted) {
+    vector<pair<size_t, size_t>> originalBlocks =
+        findBlocksBetweenFormatSwitch(original);
+    vector<pair<size_t, size_t>> formattedBlocks =
+        findBlocksBetweenFormatSwitch(formatted);
     if (originalBlocks.size() != formattedBlocks.size()) {
         cerr << "Unexpected! originalBlocks.size() = " << originalBlocks.size()
-             << " , formattedBlocks.size() = " << formattedBlocks.size() << endl;
+             << " , formattedBlocks.size() = " << formattedBlocks.size()
+             << endl;
     }
     size_t sz = min(originalBlocks.size(), formattedBlocks.size());
     if (sz == 0) {
@@ -85,7 +89,9 @@ string resetContentInDisableFormatBlocks(const string& original, const string& f
             nextFormttedBlockEndAt = formattedBlocks[i + 1].first;
         }
         os << original.substr(startAt, endAt - startAt);
-        os << formatted.substr(nextFormttedBlockStartAt, nextFormttedBlockEndAt - nextFormttedBlockStartAt);
+        os << formatted.substr(
+            nextFormttedBlockStartAt,
+            nextFormttedBlockEndAt - nextFormttedBlockStartAt);
     }
     return os.str();
 }

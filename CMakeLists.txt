@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.13.0)
 # target
 add_executable(test "")
 set_target_properties(test PROPERTIES OUTPUT_NAME "test")
-set_target_properties(test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "build/linux/x86_64/debug")
+set_target_properties(test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "build/linux/x86_64/release")
 target_include_directories(test PRIVATE
     src
     src/parser
@@ -24,7 +24,6 @@ target_compile_options(test PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:-m64>
     $<$<COMPILE_LANGUAGE:CXX>:-std=c++17>
     $<$<COMPILE_LANGUAGE:CXX>:-fuse-ld=lld>
-    $<$<COMPILE_LANGUAGE:CXX>:-fpermissive>
 )
 target_link_directories(test PRIVATE
     /usr/local/lib
@@ -231,7 +230,7 @@ target_sources(test PRIVATE
 # target
 add_executable(lua-format "")
 set_target_properties(lua-format PROPERTIES OUTPUT_NAME "lua-format")
-set_target_properties(lua-format PROPERTIES RUNTIME_OUTPUT_DIRECTORY "build/linux/x86_64/debug")
+set_target_properties(lua-format PROPERTIES RUNTIME_OUTPUT_DIRECTORY "build/linux/x86_64/release")
 target_include_directories(lua-format PRIVATE
     src
     src/parser

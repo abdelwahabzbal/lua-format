@@ -1,4 +1,4 @@
-name: test
+name: test-lua-format
 
 on:
   push:
@@ -23,5 +23,5 @@ jobs:
         xmake repo --add yaml https://github.com/jbeder/yaml-cpp.git master
         xmake repo --add catch https://github.com/catchorg/Catch2.git devel
         xmake config --toolchain=clang --cxxflags='-std=c++17'
-        xmake build test
-        xmake run --workdir=. test
+        xmake build test-lua-format
+        xmake run --workdir=. test-lua-format

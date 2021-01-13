@@ -52,7 +52,9 @@ Config::Config() {
             return value;
         }
         std::cerr << "[ERROR] Processing " << key << " failed" << std::endl;
-        throw domain_error("[ERROR] Configuration value is out of range. Must be a positive integer greater than 0.");
+        throw domain_error(
+            "[ERROR] Configuration value is out of range. Must be a positive "
+            "integer greater than 0.");
     };
 
     // validate integer with 0s as configuration value
@@ -62,7 +64,9 @@ Config::Config() {
             return value;
         }
         std::cerr << "[ERROR] Processing " << key << " failed" << std::endl;
-        throw domain_error("[ERROR] Configuration value is out of range. Must be a positive integer.");
+        throw domain_error(
+            "[ERROR] Configuration value is out of range. Must be a positive "
+            "integer.");
     };
     auto validate_boolean = [](std::string key, std::any elem) {
         bool value = std::any_cast<bool>(elem);
@@ -77,13 +81,17 @@ Config::Config() {
         if (key == "double_quote_to_single_quote") {
             if (value && (node_["single_quote_to_double_quote"]).as<bool>()) {
                 throw logic_error(
-                    "[ERROR] Configuration value of double_quote_to_single_quote is conflicting with the value of "
+                    "[ERROR] Configuration value of "
+                    "double_quote_to_single_quote is "
+                    "conflicting with the value of "
                     "single_quote_to_double_quote");
             }
         } else if (key == "single_quote_to_double_quote") {
             if (value && (node_["double_quote_to_single_quote"]).as<bool>()) {
                 throw logic_error(
-                    "[ERROR] Configuration value of single_quote_to_double_quote is conflicting with the value of "
+                    "[ERROR] Configuration value of "
+                    "single_quote_to_double_quote is "
+                    "conflicting with the value of "
                     "double_quote_to_single_quote");
             }
         }
@@ -92,16 +100,25 @@ Config::Config() {
     auto validate_use_tab = [&](std::string key, std::any elem) {
         bool value = std::any_cast<bool>(elem);
         if (value && (node_["tab_width"]).as<int>() == false) {
-            throw logic_error("[ERROR] Configuration value of use_tab is conflicting with the value of tab_width");
+            throw logic_error(
+                "[ERROR] Configuration value of use_tab is conflicting with "
+                "the "
+                "value of tab_width");
         }
         return value;
     };
     auto validate_tab_width = [&](std::string key, std::any elem) {
         int value = std::any_cast<int>(elem);
         if (value < 0) {
-            throw domain_error("[ERROR] Configuration value of tab_width is out of range. Must be a positive integer.");
+            throw domain_error(
+                "[ERROR] Configuration value of tab_width is out "
+                "of range. Must be a "
+                "positive integer.");
         } else if (value == false && (node_["use_tab"]).as<bool>()) {
-            throw logic_error("[ERROR] Configuration value of tab_width is conflicting with the value of use_tab");
+            throw logic_error(
+                "[ERROR] Configuration value of tab_width is conflicting with "
+                "the "
+                "value of use_tab");
         }
         return value;
     };
@@ -162,7 +179,7 @@ Config::Config() {
     datatype["table_sep"] = 'c';
 }
 
-void Config::readFromFile(const string &file) {
+void Config::readFromFile(const string& file) {
     std::filesystem::file_status status = std::filesystem::status(file);
     std::filesystem::perms perm = status.permissions();
 
@@ -171,7 +188,8 @@ void Config::readFromFile(const string &file) {
         exit(-1);
     }
 
-    if ((perm & std::filesystem::perms::owner_read) == std::filesystem::perms::none) {
+    if ((perm & std::filesystem::perms::owner_read) ==
+        std::filesystem::perms::none) {
         cerr << file << ": No access to read." << endl;
         exit(-1);
     }
@@ -188,17 +206,20 @@ void Config::readFromFile(const string &file) {
             switch (datatype[key]) {
                 case 'i': {
                     auto value = kv.second.as<int>();
-                    node_[key] = std::any_cast<int>(validators[key](key, value));
+                    node_[key] =
+                        std::any_cast<int>(validators[key](key, value));
                     break;
                 }
                 case 'b': {
                     auto value = kv.second.as<bool>();
-                    node_[key] = std::any_cast<bool>(validators[key](key, value));
+                    node_[key] =
+                        std::any_cast<bool>(validators[key](key, value));
                     break;
                 }
                 case 'c': {
                     auto value = kv.second.as<char>();
-                    node_[key] = std::any_cast<char>(validators[key](key, value));
+                    node_[key] =
+                        std::any_cast<char>(validators[key](key, value));
                     break;
                 }
             }
@@ -212,7 +233,7 @@ void Config::readFromFile(const string &file) {
     }
 }
 
-void Config::readFromMap(map<string, any> &mp) {
+void Config::readFromMap(map<string, any>& mp) {
     bool given = false;
     string CTL = "column_table_limit";
     string CL = "column_limit";
@@ -222,17 +243,20 @@ void Config::readFromMap(map<string, any> &mp) {
             switch (datatype[key]) {
                 case 'i': {
                     assert(strcmp(kv.second.type().name(), "i") == 0);
-                    node_[key] = std::any_cast<int>(validators[key](key, kv.second));
+                    node_[key] =
+                        std::any_cast<int>(validators[key](key, kv.second));
                     break;
                 }
                 case 'b': {
                     assert(strcmp(kv.second.type().name(), "b") == 0);
-                    node_[key] = std::any_cast<bool>(validators[key](key, kv.second));
+                    node_[key] =
+                        std::any_cast<bool>(validators[key](key, kv.second));
                     break;
                 }
                 case 'c': {
                     assert(strcmp(kv.second.type().name(), "c") == 0);
-                    node_[key] = std::any_cast<char>(validators[key](key, kv.second));
+                    node_[key] =
+                        std::any_cast<char>(validators[key](key, kv.second));
                     break;
                 }
             }
@@ -246,5 +270,5 @@ void Config::readFromMap(map<string, any> &mp) {
     }
 }
 
-void Config::dumpCurrent(ofstream &fout) { fout << node_ << endl; }
-void Config::dumpCurrent(ostream &out) { out << node_ << endl; }
+void Config::dumpCurrent(ofstream& fout) { fout << node_ << endl; }
+void Config::dumpCurrent(ostream& out) { out << node_ << endl; }

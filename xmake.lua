@@ -10,15 +10,15 @@ set_kind("binary")
 add_cxxflags("-std=c++17", "-fuse-ld=lld", {force = true})
 add_files("src/**.cpp", repo .. "antlr/runtime/Cpp/runtime/src/**.cpp",
           repo .. "yaml/src/**.cpp")
-add_includedirs("src", "src/parser", repo .. "args", repo .. "yaml/include",
+add_includedirs("src", "src/lua", repo .. "args", repo .. "yaml/include",
                 repo .. "antlr/runtime/Cpp/runtime/src")
 
-target("test")
+target("test-lua-format")
 set_kind("binary")
 add_cxxflags("-std=c++17", "-fuse-ld=lld", {force = true})
-add_files("test/**.cpp", "src/**.cpp", repo .. "yaml/src/**.cpp",
+add_files("tests/**.cpp", "src/**.cpp", repo .. "yaml/src/**.cpp",
           repo .. "antlr/runtime/Cpp/runtime/src/**.cpp")
 del_files("src/main.cpp")
-add_includedirs("src", "src/parser", repo .. "yaml/include",
+add_includedirs("src", "src/lua", repo .. "yaml/include",
                 repo .. "antlr/runtime/Cpp/runtime/src", repo .. "args",
                 repo .. "catch/include")

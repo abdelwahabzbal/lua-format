@@ -18,4 +18,4 @@ using namespace std;
         REQUIRE_THROWS_WITH(lua_format(input, config), "Input contains syntax errors"); \
     }
 
-TEST_FILE(PROJECT_PATH + "/test/testdata/issues/issue-55.lua");
+TEST_FILE(PROJECT_PATH + "/tests/.data/issues/issue-55.lua");

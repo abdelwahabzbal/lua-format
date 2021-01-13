@@ -14,125 +14,197 @@ int main(int argc, const char* argv[]) {
     args::Group dc(parser, "", args::Group::Validators::DontCare);
     args::Flag verbose(dc, "verbose", "Turn on verbose mode", {'v', "verbose"});
     args::Flag inplace(dc, "in-place", "Reformats in-place", {'i'});
-    args::Flag dumpcfg(dc, "dump current style", "Dumps the default style used to stdout", {'d', "dump-config"});
-    args::ValueFlag<string> cFile(parser, "file", "Style config file", {'c', "config"});
-    args::ValueFlag<int> columnlimit(parser, "column limit", "Column limit of one line", {"column-limit"});
-    args::ValueFlag<int> indentwidth(parser, "indentation width", "Number of spaces used for indentation",
+    args::Flag dumpcfg(dc, "dump current style",
+                       "Dumps the default style used to stdout",
+                       {'d', "dump-config"});
+    args::ValueFlag<string> cFile(parser, "file", "Style config file",
+                                  {'c', "config"});
+    args::ValueFlag<int> columnlimit(
+        parser, "column limit", "Column limit of one line", {"column-limit"});
+    args::ValueFlag<int> indentwidth(parser, "indentation width",
+                                     "Number of spaces used for indentation",
                                      {"indent-width"});
-    args::ValueFlag<int> tabwidth(parser, "tab width", "Number of spaces used per tab", {"tab-width"});
-    args::ValueFlag<int> continuationindentwidth(parser, "Continuation indentation width",
-                                                 "Indent width for continuations line", {"continuation-indent-width"});
-    args::ValueFlag<int> spacesbeforecall(parser, "spaces before call", "Space on function calls",
+    args::ValueFlag<int> tabwidth(
+        parser, "tab width", "Number of spaces used per tab", {"tab-width"});
+    args::ValueFlag<int> continuationindentwidth(
+        parser, "Continuation indentation width",
+        "Indent width for continuations line", {"continuation-indent-width"});
+    args::ValueFlag<int> spacesbeforecall(parser, "spaces before call",
+                                          "Space on function calls",
                                           {"spaces-before-call"});
-    args::ValueFlag<int> columntablelimit(parser, "column table limit", "Column limit of each line of a table",
-                                          {"column-table-limit"});
-    args::ValueFlag<char> tablesep(parser, "table separator", "Character to separate table fields", {"table-sep"});
+    args::ValueFlag<int> columntablelimit(
+        parser, "column table limit", "Column limit of each line of a table",
+        {"column-table-limit"});
+    args::ValueFlag<char> tablesep(parser, "table separator",
+                                   "Character to separate table fields",
+                                   {"table-sep"});
 
-    args::Group optusetab(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag usetab(optusetab, "Tab indentation", "Use tab for indentation", {"use-tab"});
-    args::Flag nousetab(optusetab, "Tab indentation", "Do not use tab for indentation", {"no-use-tab"});
+    args::Group optusetab(parser, "This group is all exclusive:",
+                          args::Group::Validators::AtMostOne);
+    args::Flag usetab(optusetab, "Tab indentation", "Use tab for indentation",
+                      {"use-tab"});
+    args::Flag nousetab(optusetab, "Tab indentation",
+                        "Do not use tab for indentation", {"no-use-tab"});
 
-    args::Group optcontrolblock(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag controlblock(optcontrolblock, "Control block", "keep block in one line",
+    args::Group optcontrolblock(parser, "This group is all exclusive:",
+                                args::Group::Validators::AtMostOne);
+    args::Flag controlblock(optcontrolblock, "Control block",
+                            "keep block in one line",
                             {"keep-simple-control-block-one-line"});
-    args::Flag nocontrolblock(optcontrolblock, "Control block", "Do not keep block in one line",
+    args::Flag nocontrolblock(optcontrolblock, "Control block",
+                              "Do not keep block in one line",
                               {"no-keep-simple-control-block-one-line"});
 
-    args::Group optfunctionline(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag functionline(optfunctionline, "function line", "keep function in one line",
+    args::Group optfunctionline(parser, "This group is all exclusive:",
+                                args::Group::Validators::AtMostOne);
+    args::Flag functionline(optfunctionline, "function line",
+                            "keep function in one line",
                             {"keep-simple-function-one-line"});
-    args::Flag nofunctionline(optfunctionline, "function line", "Do not keep function in one line",
+    args::Flag nofunctionline(optfunctionline, "function line",
+                              "Do not keep function in one line",
                               {"no-keep-simple-function-one-line"});
 
-    args::Group optalignargs(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag alignargs(optalignargs, "align args", "Align the arguments", {"align-args"});
-    args::Flag noalignargs(optalignargs, "align args", "Do not align the arguments", {"no-align-args"});
+    args::Group optalignargs(parser, "This group is all exclusive:",
+                             args::Group::Validators::AtMostOne);
+    args::Flag alignargs(optalignargs, "align args", "Align the arguments",
+                         {"align-args"});
+    args::Flag noalignargs(optalignargs, "align args",
+                           "Do not align the arguments", {"no-align-args"});
 
-    args::Group optfunctioncallLP(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag functioncallLP(optfunctioncallLP, "functioncall lp", "Break after '(' of function call",
+    args::Group optfunctioncallLP(parser, "This group is all exclusive:",
+                                  args::Group::Validators::AtMostOne);
+    args::Flag functioncallLP(optfunctioncallLP, "functioncall lp",
+                              "Break after '(' of function call",
                               {"break-after-functioncall-lp"});
-    args::Flag nofunctioncallLP(optfunctioncallLP, "functioncall lp", "Do not break after '(' of function call",
+    args::Flag nofunctioncallLP(optfunctioncallLP, "functioncall lp",
+                                "Do not break after '(' of function call",
                                 {"no-break-after-functioncall-lp"});
 
-    args::Group optfunctioncallRP(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag functioncallRP(optfunctioncallRP, "functioncall rp", "Break before ')' of function call",
+    args::Group optfunctioncallRP(parser, "This group is all exclusive:",
+                                  args::Group::Validators::AtMostOne);
+    args::Flag functioncallRP(optfunctioncallRP, "functioncall rp",
+                              "Break before ')' of function call",
                               {"break-before-functioncall-rp"});
-    args::Flag nofunctioncallRP(optfunctioncallRP, "functioncall rp", "Do not break before ')' of function call",
+    args::Flag nofunctioncallRP(optfunctioncallRP, "functioncall rp",
+                                "Do not break before ')' of function call",
                                 {"no-break-before-functioncall-rp"});
 
-    args::Group optalignparameter(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag alignparameter(optalignparameter, "align parameter", "Align the parameters", {"align-parameter"});
-    args::Flag noalignparameter(optalignparameter, "align parameter", "Do not align the parameters",
+    args::Group optalignparameter(parser, "This group is all exclusive:",
+                                  args::Group::Validators::AtMostOne);
+    args::Flag alignparameter(optalignparameter, "align parameter",
+                              "Align the parameters", {"align-parameter"});
+    args::Flag noalignparameter(optalignparameter, "align parameter",
+                                "Do not align the parameters",
                                 {"no-align-parameter"});
 
-    args::Group optchopdownparameter(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag chopdownparameter(optchopdownparameter, "chop down parameter", "Chop down all parameters",
+    args::Group optchopdownparameter(parser, "This group is all exclusive:",
+                                     args::Group::Validators::AtMostOne);
+    args::Flag chopdownparameter(optchopdownparameter, "chop down parameter",
+                                 "Chop down all parameters",
                                  {"chop-down-parameter"});
-    args::Flag nochopdownparameter(optchopdownparameter, "chop down parameter", "Do not chop down all parameters",
+    args::Flag nochopdownparameter(optchopdownparameter, "chop down parameter",
+                                   "Do not chop down all parameters",
                                    {"no-chop-down-parameter"});
 
-    args::Group optfunctiondefLP(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag functiondefLP(optfunctiondefLP, "functiondef lp", "Break after '(' of function def",
+    args::Group optfunctiondefLP(parser, "This group is all exclusive:",
+                                 args::Group::Validators::AtMostOne);
+    args::Flag functiondefLP(optfunctiondefLP, "functiondef lp",
+                             "Break after '(' of function def",
                              {"break-after-functiondef-lp"});
-    args::Flag nofunctiondefLP(optfunctiondefLP, "functiondef lp", "Do not break after '(' of function def",
+    args::Flag nofunctiondefLP(optfunctiondefLP, "functiondef lp",
+                               "Do not break after '(' of function def",
                                {"no-break-after-functiondef-lp"});
 
-    args::Group optfunctiondefRP(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag functiondefRP(optfunctiondefRP, "functiondef rp", "Break before ')' of function def",
+    args::Group optfunctiondefRP(parser, "This group is all exclusive:",
+                                 args::Group::Validators::AtMostOne);
+    args::Flag functiondefRP(optfunctiondefRP, "functiondef rp",
+                             "Break before ')' of function def",
                              {"break-before-functiondef-rp"});
-    args::Flag nofunctiondefRP(optfunctiondefRP, "functiondef rp", "Do not break before ')' of function def",
+    args::Flag nofunctiondefRP(optfunctiondefRP, "functiondef rp",
+                               "Do not break before ')' of function def",
                                {"no-break-before-functiondef-rp"});
 
-    args::Group optaligntablefield(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag aligntablefield(optaligntablefield, "align table field", "Align fields of table", {"align-table-field"});
-    args::Flag noaligntablefield(optaligntablefield, "align table field", "Do not align fields of table",
+    args::Group optaligntablefield(parser, "This group is all exclusive:",
+                                   args::Group::Validators::AtMostOne);
+    args::Flag aligntablefield(optaligntablefield, "align table field",
+                               "Align fields of table", {"align-table-field"});
+    args::Flag noaligntablefield(optaligntablefield, "align table field",
+                                 "Do not align fields of table",
                                  {"no-align-table-field"});
 
-    args::Group opttableLB(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag tableLB(opttableLB, "table LB", "Break after '{' of table", {"break-after-table-lb"});
-    args::Flag notableLB(opttableLB, "table LB", "Do not break after '{' of table", {"no-break-after-table-lb"});
+    args::Group opttableLB(parser, "This group is all exclusive:",
+                           args::Group::Validators::AtMostOne);
+    args::Flag tableLB(opttableLB, "table LB", "Break after '{' of table",
+                       {"break-after-table-lb"});
+    args::Flag notableLB(opttableLB, "table LB",
+                         "Do not break after '{' of table",
+                         {"no-break-after-table-lb"});
 
-    args::Group opttableRB(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag tableRB(opttableRB, "table RB", "Break before '}' of table", {"break-before-table-rb"});
-    args::Flag notableRB(opttableRB, "table RB", "Do not break before '}' of table", {"no-break-before-table-rb"});
+    args::Group opttableRB(parser, "This group is all exclusive:",
+                           args::Group::Validators::AtMostOne);
+    args::Flag tableRB(opttableRB, "table RB", "Break before '}' of table",
+                       {"break-before-table-rb"});
+    args::Flag notableRB(opttableRB, "table RB",
+                         "Do not break before '}' of table",
+                         {"no-break-before-table-rb"});
 
-    args::Group optchopdowntable(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag chopdowntable(optchopdowntable, "chop down table", "Chop down any table", {"chop-down-table"});
-    args::Flag nochopdowntable(optchopdowntable, "chop down table", "Do not chop down any table",
+    args::Group optchopdowntable(parser, "This group is all exclusive:",
+                                 args::Group::Validators::AtMostOne);
+    args::Flag chopdowntable(optchopdowntable, "chop down table",
+                             "Chop down any table", {"chop-down-table"});
+    args::Flag nochopdowntable(optchopdowntable, "chop down table",
+                               "Do not chop down any table",
                                {"no-chop-down-table"});
 
-    args::Group optchopdownkvtable(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag chopdownkvtable(optchopdownkvtable, "chop down table keys", "Chop down table if table contains key",
+    args::Group optchopdownkvtable(parser, "This group is all exclusive:",
+                                   args::Group::Validators::AtMostOne);
+    args::Flag chopdownkvtable(optchopdownkvtable, "chop down table keys",
+                               "Chop down table if table contains key",
                                {"chop-down-kv-table"});
     args::Flag nochopdownkvtable(optchopdownkvtable, "chop down table keys",
-                                 "Do not chop down table if table contains key", {"no-chop-down-kv-table"});
+                                 "Do not chop down table if table contains key",
+                                 {"no-chop-down-kv-table"});
 
-    args::Group opttableEnd(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag tableEnd(opttableEnd, "separator at end", "Add a extra field separator", {"extra-sep-at-table-end"});
-    args::Flag notableEnd(opttableEnd, "separator at end", "Do not add a extra field separator",
+    args::Group opttableEnd(parser, "This group is all exclusive:",
+                            args::Group::Validators::AtMostOne);
+    args::Flag tableEnd(opttableEnd, "separator at end",
+                        "Add a extra field separator",
+                        {"extra-sep-at-table-end"});
+    args::Flag notableEnd(opttableEnd, "separator at end",
+                          "Do not add a extra field separator",
                           {"no-extra-sep-at-table-end"});
 
-    args::Group optbreakoperator(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag breakoperator(optbreakoperator, "break after operator", "Put break after operators",
+    args::Group optbreakoperator(parser, "This group is all exclusive:",
+                                 args::Group::Validators::AtMostOne);
+    args::Flag breakoperator(optbreakoperator, "break after operator",
+                             "Put break after operators",
                              {"break-after-operator"});
-    args::Flag nobreakoperator(optbreakoperator, "break after operator", "Do not put break after operators",
+    args::Flag nobreakoperator(optbreakoperator, "break after operator",
+                               "Do not put break after operators",
                                {"no-break-after-operator"});
 
-    args::Group optDoubleSingle(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag DoubleSingle(optDoubleSingle, "double to single quote", "Transform string literals to use single quote",
+    args::Group optDoubleSingle(parser, "This group is all exclusive:",
+                                args::Group::Validators::AtMostOne);
+    args::Flag DoubleSingle(optDoubleSingle, "double to single quote",
+                            "Transform string literals to use single quote",
                             {"double-quote-to-single-quote"});
-    args::Flag noDoubleSingle(optDoubleSingle, "double to single quote",
-                              "Do not transform string literals to use single quote",
-                              {"no-double-quote-to-single-quote"});
+    args::Flag noDoubleSingle(
+        optDoubleSingle, "double to single quote",
+        "Do not transform string literals to use single quote",
+        {"no-double-quote-to-single-quote"});
 
-    args::Group optSingleDouble(parser, "This group is all exclusive:", args::Group::Validators::AtMostOne);
-    args::Flag SingleDouble(optSingleDouble, "single to double quote", "Transform string literals to use double quote",
+    args::Group optSingleDouble(parser, "This group is all exclusive:",
+                                args::Group::Validators::AtMostOne);
+    args::Flag SingleDouble(optSingleDouble, "single to double quote",
+                            "Transform string literals to use double quote",
                             {"single-quote-to-double-quote"});
-    args::Flag noSingleDouble(optSingleDouble, "single to double quote",
-                              "Do not transform string literals to use double quote",
-                              {"no-single-quote-to-double-quote"});
+    args::Flag noSingleDouble(
+        optSingleDouble, "single to double quote",
+        "Do not transform string literals to use double quote",
+        {"no-single-quote-to-double-quote"});
 
-    args::PositionalList<string> files(parser, "Lua scripts", "Lua scripts to format");
+    args::PositionalList<string> files(parser, "Lua scripts",
+                                       "Lua scripts to format");
 
     Config config;
 
@@ -166,7 +238,8 @@ int main(int argc, const char* argv[]) {
         config.argmap["tab_width"] = args::get(tabwidth);
     }
     if (continuationindentwidth) {
-        config.argmap["continuation_indent_width"] = args::get(continuationindentwidth);
+        config.argmap["continuation_indent_width"] =
+            args::get(continuationindentwidth);
     }
     if (spacesbeforecall) {
         config.argmap["spaces_before_call"] = args::get(spacesbeforecall);
@@ -300,7 +373,8 @@ int main(int argc, const char* argv[]) {
         while (configFileName.empty()) {
             for (auto& entry : std::filesystem::directory_iterator(current)) {
                 std::filesystem::path candidate = entry.path();
-                if (candidate.filename() == ".lua-format") configFileName = candidate.string();
+                if (candidate.filename() == ".lua-format")
+                    configFileName = candidate.string();
             }
 
             std::filesystem::path parent = current.parent_path();
@@ -314,7 +388,8 @@ int main(int argc, const char* argv[]) {
 #ifdef __linux__
     if (configFileName.empty()) {
         string conf_dir;
-        if (const char* const conf_dir_p = getenv("XDG_CONFIG_HOME")) conf_dir = conf_dir_p;
+        if (const char* const conf_dir_p = getenv("XDG_CONFIG_HOME"))
+            conf_dir = conf_dir_p;
         if (conf_dir.empty()) {
             string home;
             if (const char* const home_p = getenv("HOME")) home = home_p;
@@ -331,7 +406,8 @@ int main(int argc, const char* argv[]) {
         if (verbose) cerr << "using default configuration" << endl;
         goto use_default;
     } else {
-        if (verbose) cerr << "using configuration file: " << configFileName << endl;
+        if (verbose)
+            cerr << "using configuration file: " << configFileName << endl;
     }
 
     if (std::filesystem::exists(configFileName)) {
@@ -379,7 +455,8 @@ use_default:
                 cerr << "formatting: " << fileName << endl;
             }
             if (std::filesystem::exists(fileName)) {
-                std::filesystem::file_status status = std::filesystem::status(fileName);
+                std::filesystem::file_status status =
+                    std::filesystem::status(fileName);
                 std::filesystem::perms perm = status.permissions();
 
                 if (!std::filesystem::is_regular_file(status)) {
@@ -387,12 +464,14 @@ use_default:
                     continue;
                 }
 
-                if ((perm & std::filesystem::perms::owner_read) == std::filesystem::perms::none) {
+                if ((perm & std::filesystem::perms::owner_read) ==
+                    std::filesystem::perms::none) {
                     cerr << fileName << ": No access to read." << endl;
                     continue;
                 }
 
-                if (inplace && (perm & std::filesystem::perms::owner_write) == std::filesystem::perms::none) {
+                if (inplace && (perm & std::filesystem::perms::owner_write) ==
+                                   std::filesystem::perms::none) {
                     cerr << fileName << ": No access to write." << endl;
                     continue;
                 }
@@ -418,7 +497,6 @@ use_default:
                         cerr << "format success: " << fileName << endl;
                     }
                 }
-
             } catch (const std::invalid_argument& e) {
                 cerr << e.what() << endl;
                 return 1;

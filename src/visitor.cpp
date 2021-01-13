@@ -34,7 +34,9 @@ static int logIndentSize = 0;
 #define LOG_FUNCTION_END()
 #endif
 
-static bool isBlankChar(const char c) { return c == ' ' || c == '\t' || c == '\u000C'; }
+static bool isBlankChar(const char c) {
+    return c == ' ' || c == '\t' || c == '\u000C';
+}
 
 int firstNodeIndex(tree::ParseTree* t) {
     if (t == NULL) {
@@ -68,7 +70,8 @@ int lastNodeIndex(tree::ParseTree* t) {
 
 // commentAfter returns comments between a ParseTreeNode and the next Node.
 // expect: return expect string if no comments found
-string FormatVisitor::commentAfter(tree::ParseTree* node, const string& expect) {
+string FormatVisitor::commentAfter(tree::ParseTree* node,
+                                   const string& expect) {
     int l = lastNodeIndex(node);
     stringstream ss;
     // No space on left of first comment
@@ -103,10 +106,11 @@ string FormatVisitor::commentAfter(tree::ParseTree* node, const string& expect) 
     return ss.str();
 }
 
-// commentAfterNewLine returns comments between a ParseTreeNode and the next Node.
-// This function always expect a line break.
-// NewLineIndent: inc or dec indent after a line break.
-string FormatVisitor::commentAfterNewLine(tree::ParseTree* node, NewLineIndent newLineIndent) {
+// commentAfterNewLine returns comments between a ParseTreeNode and the next
+// Node. This function always expect a line break. NewLineIndent: inc or dec
+// indent after a line break.
+string FormatVisitor::commentAfterNewLine(tree::ParseTree* node,
+                                          NewLineIndent newLineIndent) {
     ParserRuleContext* ctx = dynamic_cast<ParserRuleContext*>(node);
     if (ctx != NULL && ctx->children.size() == 0) {
         if (newLineIndent == INC_INDENT) {
@@ -208,7 +212,8 @@ void FormatVisitor::popWriter() {
 bool FormatVisitor::fastTestColumnLimit(tree::ParseTree* node) {
     int columns = cur_columns();
     for (int i = firstNodeIndex(node), n = lastNodeIndex(node); i <= n; i++) {
-        if (tokens_[i]->getType() == LuaLexer::COMMENT || tokens_[i]->getType() == LuaLexer::LINE_COMMENT ||
+        if (tokens_[i]->getType() == LuaLexer::COMMENT ||
+            tokens_[i]->getType() == LuaLexer::LINE_COMMENT ||
             tokens_[i]->getType() == LuaLexer::WS) {
             continue;
         }
@@ -228,7 +233,8 @@ int FormatVisitor::cur_columns() { return (*writers_.back()).columns().back(); }
 string FormatVisitor::formatLineComment(Token* token) {
     string comment = token->getText();
     char firstChar = comment[2];
-    if (isBlankChar(firstChar) || firstChar == '-' || firstChar == '\r' || firstChar == '\n') {
+    if (isBlankChar(firstChar) || firstChar == '-' || firstChar == '\r' ||
+        firstChar == '\n') {
         // do nothing
     } else {
         comment = "-- " + comment.substr(2, comment.size());
@@ -270,14 +276,16 @@ antlrcpp::Any FormatVisitor::visitBlock(LuaParser::BlockContext* ctx) {
         if (needComment) {
             if (isNextSemi) {
                 string comment = commentAfter(stats[i], "");
-                if (previousWhiteSpace && comment.size() > 0 && comment[0] == ' ') {
+                if (previousWhiteSpace && comment.size() > 0 &&
+                    comment[0] == ' ') {
                     cur_writer() << comment.substr(1, comment.size() - 1);
                 } else {
                     cur_writer() << comment;
                 }
             } else {
                 string comment = commentAfterNewLine(stats[i], NONE_INDENT);
-                if (previousWhiteSpace && comment.size() > 0 && comment[0] == ' ') {
+                if (previousWhiteSpace && comment.size() > 0 &&
+                    comment[0] == ' ') {
                     cur_writer() << comment.substr(1, comment.size() - 1);
                 } else {
                     cur_writer() << comment;
@@ -326,7 +334,8 @@ antlrcpp::Any FormatVisitor::visitVarDecl(LuaParser::VarDeclContext* ctx) {
 
 // Builds first argument whitespace in spaces.
 // local a = f<WS>{1, 2, 3} or f<WS>"a"
-string FormatVisitor::buildFirstArgumentWs(vector<LuaParser::NameAndArgsContext*> v) {
+string FormatVisitor::buildFirstArgumentWs(
+    vector<LuaParser::NameAndArgsContext*> v) {
     bool needWhiteSpace = false;
 
     if (v.size() > 0) {
@@ -362,14 +371,17 @@ void FormatVisitor::buildArguments(vector<LuaParser::NameAndArgsContext*> v) {
             break;
 
         auto nctx = v[i + 1];
-        if (nctx->COLON() == NULL && (nctx->args()->string() || nctx->args()->tableconstructor())) ws = " ";
+        if (nctx->COLON() == NULL &&
+            (nctx->args()->string() || nctx->args()->tableconstructor()))
+            ws = " ";
 
         cur_writer() << commentAfter(ctx, ws);
     }
 }
 
 // varOrExp nameAndArgs+;
-antlrcpp::Any FormatVisitor::visitFunctioncall(LuaParser::FunctioncallContext* ctx) {
+antlrcpp::Any FormatVisitor::visitFunctioncall(
+    LuaParser::FunctioncallContext* ctx) {
     LOG_FUNCTION_BEGIN();
     chainedMethodCallHasIncIndent_.push_back(false);
     chainedMethodCallIsFirst_.push_back(false);
@@ -428,7 +440,8 @@ antlrcpp::Any FormatVisitor::visitWhileStat(LuaParser::WhileStatContext* ctx) {
 }
 
 // REPEAT block UNTIL exp;
-antlrcpp::Any FormatVisitor::visitRepeatStat(LuaParser::RepeatStatContext* ctx) {
+antlrcpp::Any FormatVisitor::visitRepeatStat(
+    LuaParser::RepeatStatContext* ctx) {
     LOG_FUNCTION_BEGIN();
     cur_writer() << ctx->REPEAT()->getText();
     visitBlockAndComment(ctx->REPEAT(), ctx->block(), CONTROL_BLOCK);
@@ -446,14 +459,16 @@ antlrcpp::Any FormatVisitor::visitRepeatStat(LuaParser::RepeatStatContext* ctx) 
 // IF exp THEN block (ELSEIF exp THEN block)* (ELSE block)? END;
 antlrcpp::Any FormatVisitor::visitIfStat(LuaParser::IfStatContext* ctx) {
     LOG_FUNCTION_BEGIN();
-    // keep if statement one line only when there is no elseif or else statement.
+    // keep if statement one line only when there is no elseif or else
+    // statement.
     cur_writer() << ctx->IF()->getText();
     cur_writer() << commentAfter(ctx->IF(), " ");
     visitExp(ctx->exp().front());
     cur_writer() << commentAfter(ctx->exp().front(), " ");
     cur_writer() << ctx->THEN().front()->getText();
     if (ctx->ELSEIF().size() == 0 && ctx->ELSE() == NULL) {
-        if (needKeepBlockOneLine(ctx->THEN().front(), ctx->block().front(), CONTROL_BLOCK)) {
+        if (needKeepBlockOneLine(ctx->THEN().front(), ctx->block().front(),
+                                 CONTROL_BLOCK)) {
             cur_writer() << commentAfter(ctx->THEN().front(), " ");
             bool temp = chop_down_block_;
             chop_down_block_ = false;
@@ -555,7 +570,8 @@ antlrcpp::Any FormatVisitor::visitFuncStat(LuaParser::FuncStatContext* ctx) {
 }
 
 // LOCAL FUNCTION NAME funcbody;
-antlrcpp::Any FormatVisitor::visitLocalFuncStat(LuaParser::LocalFuncStatContext* ctx) {
+antlrcpp::Any FormatVisitor::visitLocalFuncStat(
+    LuaParser::LocalFuncStatContext* ctx) {
     LOG_FUNCTION_BEGIN();
     cur_writer() << ctx->LOCAL()->getText();
     cur_writer() << commentAfter(ctx->LOCAL(), " ");
@@ -569,7 +585,8 @@ antlrcpp::Any FormatVisitor::visitLocalFuncStat(LuaParser::LocalFuncStatContext*
 }
 
 // LOCAL namelist (EQL explist)? SEMI?;
-antlrcpp::Any FormatVisitor::visitLocalVarDecl(LuaParser::LocalVarDeclContext* ctx) {
+antlrcpp::Any FormatVisitor::visitLocalVarDecl(
+    LuaParser::LocalVarDeclContext* ctx) {
     LOG_FUNCTION_BEGIN();
     cur_writer() << ctx->LOCAL()->getText();
     cur_writer() << commentAfter(ctx->LOCAL(), " ");
@@ -639,7 +656,8 @@ antlrcpp::Any FormatVisitor::visitNamelist(LuaParser::NamelistContext* ctx) {
     int firstParameterIndent = 0;
 
     if (n > 0) firstParameterLength++;  // calc a ',' if exp > 1
-    bool beyondLimit = cur_columns() + firstParameterLength > config_.get<int>("column_limit");
+    bool beyondLimit =
+        cur_columns() + firstParameterLength > config_.get<int>("column_limit");
     if (beyondLimit) {
         cur_writer() << "\n";
         incContinuationIndent();
@@ -669,7 +687,9 @@ antlrcpp::Any FormatVisitor::visitNamelist(LuaParser::NamelistContext* ctx) {
             int length = cur_writer().firstLineColumn();
             int lines = cur_writer().lines();
             popWriter();
-            chopDownParameter = lines > 1 || cur_columns() + length > config_.get<int>("column_limit");
+            chopDownParameter =
+                lines > 1 ||
+                cur_columns() + length > config_.get<int>("column_limit");
         }
     }
     for (int i = 0; i < n; i++) {
@@ -684,27 +704,32 @@ antlrcpp::Any FormatVisitor::visitNamelist(LuaParser::NamelistContext* ctx) {
             int length = cur_writer().firstLineColumn();
             popWriter();
             if (i != n - 1) length++;  // calc a ',' if exp > 1
-            beyondLimit = cur_columns() + length > config_.get<int>("column_limit");
+            beyondLimit =
+                cur_columns() + length > config_.get<int>("column_limit");
         }
         if (beyondLimit) {
             if (hasIncIndent) {
-                cur_writer() << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
+                cur_writer()
+                    << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
                 cur_writer() << indent();
             } else {
                 if (config_.get<bool>("align_parameter")) {
-                    cur_writer() << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
+                    cur_writer()
+                        << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
                     indent_ += firstParameterIndent;
                     cur_writer() << indent();
                     indent_ -= firstParameterIndent;
                 } else {
                     if (config_.get<bool>("break_after_functiondef_lp")) {
-                        cur_writer() << commentAfterNewLine(ctx->COMMA()[i], INC_CONTINUATION_INDENT);
+                        cur_writer() << commentAfterNewLine(
+                            ctx->COMMA()[i], INC_CONTINUATION_INDENT);
                         decIndent();
                         cur_writer() << indent();
                         incIndent();
                         hasIncIndent = true;
                     } else {
-                        cur_writer() << commentAfterNewLine(ctx->COMMA()[i], INC_CONTINUATION_INDENT);
+                        cur_writer() << commentAfterNewLine(
+                            ctx->COMMA()[i], INC_CONTINUATION_INDENT);
                         cur_writer() << indent();
                         hasIncIndent = true;
                     }
@@ -727,15 +752,18 @@ antlrcpp::Any FormatVisitor::visitNamelist(LuaParser::NamelistContext* ctx) {
 }
 
 // NAME attrib (COMMA NAME attrib)*;
-antlrcpp::Any FormatVisitor::visitAttnamelist(LuaParser::AttnamelistContext* ctx) {
+antlrcpp::Any FormatVisitor::visitAttnamelist(
+    LuaParser::AttnamelistContext* ctx) {
     LOG_FUNCTION_BEGIN();
     int n = ctx->COMMA().size();
     bool hasIncIndent = false;
-    int firstParameterLength = ctx->NAME().front()->getText().size() + ctx->attrib().front()->getText().size();
+    int firstParameterLength = ctx->NAME().front()->getText().size() +
+                               ctx->attrib().front()->getText().size();
     int firstParameterIndent = 0;
 
     if (n > 0) firstParameterLength++;  // calc a ',' if exp > 1
-    bool beyondLimit = cur_columns() + firstParameterLength > config_.get<int>("column_limit");
+    bool beyondLimit =
+        cur_columns() + firstParameterLength > config_.get<int>("column_limit");
     if (beyondLimit) {
         cur_writer() << "\n";
         incContinuationIndent();
@@ -771,16 +799,19 @@ antlrcpp::Any FormatVisitor::visitAttnamelist(LuaParser::AttnamelistContext* ctx
         beyondLimit = cur_columns() + length > config_.get<int>("column_limit");
         if (beyondLimit) {
             if (hasIncIndent) {
-                cur_writer() << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
+                cur_writer()
+                    << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
                 cur_writer() << indent();
             } else {
                 if (config_.get<bool>("align_parameter")) {
-                    cur_writer() << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
+                    cur_writer()
+                        << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
                     indent_ += firstParameterIndent;
                     cur_writer() << indent();
                     indent_ -= firstParameterIndent;
                 } else {
-                    cur_writer() << commentAfterNewLine(ctx->COMMA()[i], INC_CONTINUATION_INDENT);
+                    cur_writer() << commentAfterNewLine(
+                        ctx->COMMA()[i], INC_CONTINUATION_INDENT);
                     cur_writer() << indent();
                     hasIncIndent = true;
                 }
@@ -829,7 +860,8 @@ antlrcpp::Any FormatVisitor::visitExplist(LuaParser::ExplistContext* ctx) {
     int lines = cur_writer().lines();
     popWriter();
     if (n > 0) expLength++;  // calc a ',' if exp > 1
-    bool beyondLimit = cur_columns() + expLength > config_.get<int>("column_limit");
+    bool beyondLimit =
+        cur_columns() + expLength > config_.get<int>("column_limit");
     // if lines > 1 and current column is already too long, then break
     // example:
     // var:foo(xxxx .. xxxx) -- no break
@@ -869,19 +901,23 @@ antlrcpp::Any FormatVisitor::visitExplist(LuaParser::ExplistContext* ctx) {
         int lines = cur_writer().lines();
         popWriter();
         if (i != n - 1) expLength++;  // calc a ',' if exp > 1
-        beyondLimit = cur_columns() + expLength > config_.get<int>("column_limit");
+        beyondLimit =
+            cur_columns() + expLength > config_.get<int>("column_limit");
         if (beyondLimit && lines == 1) {
-            // lines is 1 means expression is enough short. But with current columns,
-            // it beyonds column limit, need a line break here.
-            // But if after a line break, the expression is still beyond column limit.
+            // lines is 1 means expression is enough short. But with current
+            // columns, it beyonds column limit, need a line break here. But if
+            // after a line break, the expression is still beyond column limit.
             // Then don't let it break the line at the beginning.
             // example:
-            // longlonglongvar.longlonglongmethod(arg11111, function() print("11111111111111111111111111111111") end)
+            // longlonglongvar.longlonglongmethod(arg11111, function()
+            // print("11111111111111111111111111111111") end)
             //
-            // This function call is beyond column limit when visit the second args.
-            // so if we break after ',' , it become:
+            // This function call is beyond column limit when visit the second
+            // args. so if we break after ',' , it become:
             // longlonglongvar.longlonglongmethod(arg11111,
-            //                                    function() print("11111111111111111111111111111111") end)
+            //                                    function()
+            //                                    print("11111111111111111111111111111111")
+            //                                    end)
             //
             // The second args is still too long, and need another break:
             // longlonglongvar.longlonglongmethod(arg11111,
@@ -890,31 +926,37 @@ antlrcpp::Any FormatVisitor::visitExplist(LuaParser::ExplistContext* ctx) {
             // end)
             //
             // The first break (before 'function()') doesn't seem to make sense.
-            // So determine if this expression is still beyond column limit after break.
-            // If true, determine the column again with current columns.
-            if (indentWithAlign().size() + expLength + firstArgsIndent > config_.get<unsigned int>("column_limit")) {
+            // So determine if this expression is still beyond column limit
+            // after break. If true, determine the column again with current
+            // columns.
+            if (indentWithAlign().size() + expLength + firstArgsIndent >
+                config_.get<unsigned int>("column_limit")) {
                 pushWriterWithColumn();
                 cur_writer() << commentAfter(ctx->COMMA()[i], " ");
                 visitExp(ctx->exp()[i + 1]);
                 int expLength = cur_writer().firstLineColumn();
                 popWriter();
                 if (i != n - 1) expLength++;  // calc a ',' if exp > 1
-                beyondLimit = cur_columns() + expLength > config_.get<int>("column_limit");
+                beyondLimit = cur_columns() + expLength >
+                              config_.get<int>("column_limit");
             }
         }
         if (beyondLimit) {
             bool hasIncIndentForAlign = false;
             if (hasIncIndent) {
-                cur_writer() << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
+                cur_writer()
+                    << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
                 cur_writer() << indentWithAlign();
             } else {
                 if (config_.get<bool>("align_args")) {
-                    cur_writer() << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
+                    cur_writer()
+                        << commentAfterNewLine(ctx->COMMA()[i], NONE_INDENT);
                     incIndentForAlign(firstArgsIndent);
                     cur_writer() << indentWithAlign();
                     hasIncIndentForAlign = true;
                 } else {
-                    cur_writer() << commentAfterNewLine(ctx->COMMA()[i], INC_CONTINUATION_INDENT);
+                    cur_writer() << commentAfterNewLine(
+                        ctx->COMMA()[i], INC_CONTINUATION_INDENT);
                     cur_writer() << indentWithAlign();
                     hasIncIndent = true;
                 }
@@ -973,9 +1015,11 @@ antlrcpp::Any FormatVisitor::visitExp(LuaParser::ExpContext* ctx) {
             int length = cur_writer().firstLineColumn();
             length++;  // calc the white space after operator
             popWriter();
-            beyondLimit = cur_columns() + length > config_.get<int>("column_limit");
+            beyondLimit =
+                cur_columns() + length > config_.get<int>("column_limit");
             if (beyondLimit) {
-                cur_writer() << commentAfterNewLine(ctx->linkOperator(), INC_CONTINUATION_INDENT);
+                cur_writer() << commentAfterNewLine(ctx->linkOperator(),
+                                                    INC_CONTINUATION_INDENT);
                 cur_writer() << indentWithAlign();
                 hasIncIndent = true;
             } else {
@@ -990,9 +1034,11 @@ antlrcpp::Any FormatVisitor::visitExp(LuaParser::ExpContext* ctx) {
             visitExp(ctx->exp()[1]);
             int length = cur_writer().firstLineColumn();
             popWriter();
-            beyondLimit = cur_columns() + length > config_.get<int>("column_limit");
+            beyondLimit =
+                cur_columns() + length > config_.get<int>("column_limit");
             if (beyondLimit) {
-                cur_writer() << commentAfterNewLine(ctx->exp()[0], INC_CONTINUATION_INDENT);
+                cur_writer() << commentAfterNewLine(ctx->exp()[0],
+                                                    INC_CONTINUATION_INDENT);
                 cur_writer() << indentWithAlign();
                 hasIncIndent = true;
             } else {
@@ -1010,7 +1056,8 @@ antlrcpp::Any FormatVisitor::visitExp(LuaParser::ExpContext* ctx) {
         if (ctx->unaryOperator()->getText() == "not") {
             cur_writer() << commentAfter(ctx->unaryOperator(), " ");
         } else {
-            if (ctx->unaryOperator()->getText() == "-" && ctx->exp().front()->getText()[0] == '-') {
+            if (ctx->unaryOperator()->getText() == "-" &&
+                ctx->exp().front()->getText()[0] == '-') {
                 cur_writer() << commentAfter(ctx->unaryOperator(), " ");
             } else {
                 cur_writer() << commentAfter(ctx->unaryOperator(), "");
@@ -1039,11 +1086,13 @@ antlrcpp::Any FormatVisitor::visitString(LuaParser::StringContext* ctx) {
 
         switch (quote) {
             case '\"':
-                if (!config_.get<bool>("single_quote_to_double_quote")) goto out;
+                if (!config_.get<bool>("single_quote_to_double_quote"))
+                    goto out;
                 tn = ctx->CHARSTRING();
                 break;
             case '\'':
-                if (!config_.get<bool>("double_quote_to_single_quote")) goto out;
+                if (!config_.get<bool>("double_quote_to_single_quote"))
+                    goto out;
                 tn = ctx->NORMALSTRING();
                 break;
             default:
@@ -1070,7 +1119,8 @@ antlrcpp::Any FormatVisitor::visitString(LuaParser::StringContext* ctx) {
         *newstr.rbegin() = quote;
 
         // undo a transformation that invalidates strings in certain conditions
-        if (newstr.at(newstr.size() - 2) == '\\' && newstr.at(newstr.size() - 3) != '\\')
+        if (newstr.at(newstr.size() - 2) == '\\' &&
+            newstr.at(newstr.size() - 3) != '\\')
             newstr.insert(newstr.size() - 2, "\\");
 
         cur_writer() << newstr;
@@ -1121,7 +1171,6 @@ antlrcpp::Any FormatVisitor::visitVarOrExp(LuaParser::VarOrExpContext* ctx) {
         visitExp(ctx->exp());
         cur_writer() << commentAfter(ctx->exp(), "");
         cur_writer() << ctx->RP()->getText();
-
     } else {
         visitVar(ctx->var());
     }
@@ -1192,7 +1241,8 @@ antlrcpp::Any FormatVisitor::visitVarSuffix(LuaParser::VarSuffixContext* ctx) {
             cur_writer() << ctx->RSB()->getText();
         }
     } else {
-        LuaParser::VarContext* varCtx = dynamic_cast<LuaParser::VarContext*>(ctx->parent);
+        LuaParser::VarContext* varCtx =
+            dynamic_cast<LuaParser::VarContext*>(ctx->parent);
         const vector<LuaParser::VarSuffixContext*>& arr = varCtx->varSuffix();
         int index = find(arr.begin(), arr.end(), ctx) - arr.begin();
         if (index != 0) {
@@ -1203,11 +1253,13 @@ antlrcpp::Any FormatVisitor::visitVarSuffix(LuaParser::VarSuffixContext* ctx) {
             visitNextNameAndArgs(ctx);
             int length = cur_writer().firstLineColumn();
             popWriter();
-            bool beyondLimit = cur_columns() + length > config_.get<int>("column_limit");
+            bool beyondLimit =
+                cur_columns() + length > config_.get<int>("column_limit");
             if (beyondLimit) {
                 cur_writer() << "\n";
                 if (chainedMethodCallHasIncIndent_.empty()) {
-                    // chainedMethodCallHasIncIndent_ is empty when visit var in varlist
+                    // chainedMethodCallHasIncIndent_ is empty when visit var in
+                    // varlist
                     cur_writer() << indentWithAlign();
                 } else {
                     if (chainedMethodCallHasIncIndent_.back()) {
@@ -1215,7 +1267,8 @@ antlrcpp::Any FormatVisitor::visitVarSuffix(LuaParser::VarSuffixContext* ctx) {
                     } else {
                         incContinuationIndent();
                         cur_writer() << indentWithAlign();
-                        chainedMethodCallHasIncIndent_[chainedMethodCallHasIncIndent_.size() - 1] = true;
+                        chainedMethodCallHasIncIndent_
+                            [chainedMethodCallHasIncIndent_.size() - 1] = true;
                     }
                 }
             }
@@ -1236,18 +1289,18 @@ antlrcpp::Any FormatVisitor::visitVarSuffix(LuaParser::VarSuffixContext* ctx) {
 // visit next NameAndArgsContext of VarSuffixContext
 void FormatVisitor::visitNextNameAndArgs(LuaParser::VarSuffixContext* ctx) {
     // find args of NAME
-    LuaParser::VarContext* varCtx = dynamic_cast<LuaParser::VarContext*>(ctx->parent);
+    LuaParser::VarContext* varCtx =
+        dynamic_cast<LuaParser::VarContext*>(ctx->parent);
     const vector<LuaParser::VarSuffixContext*>& arr = varCtx->varSuffix();
     unsigned int index = find(arr.begin(), arr.end(), ctx) - arr.begin();
     if (index + 1 < arr.size()) {
         for (auto na : arr[index + 1]->nameAndArgs()) {
             // if next NameAndArgs's COLON is not null
             // then formatter can place a break before COLON.
-            // So do not need to calc column length for current NAME, break the loop.
-            // example:
-            // self.xxx.yyy:foo()
-            // the 'xxx' and 'yyy' is a 'Variable', and 'foo' is a 'Method'
-            // It better break before 'foo' than break before 'yyy'
+            // So do not need to calc column length for current NAME, break the
+            // loop. example: self.xxx.yyy:foo() the 'xxx' and 'yyy' is a
+            // 'Variable', and 'foo' is a 'Method' It better break before 'foo'
+            // than break before 'yyy'
             if (na->COLON() != nullptr) break;
             visitNameAndArgs(na);
             if (na != arr[index + 1]->nameAndArgs().back()) {
@@ -1255,12 +1308,14 @@ void FormatVisitor::visitNextNameAndArgs(LuaParser::VarSuffixContext* ctx) {
             }
         }
     } else {
-        LuaParser::VarOrExpContext* varOrExpCtx = dynamic_cast<LuaParser::VarOrExpContext*>(varCtx->parent);
+        LuaParser::VarOrExpContext* varOrExpCtx =
+            dynamic_cast<LuaParser::VarOrExpContext*>(varCtx->parent);
         // parent maybe VarlistContext
         if (varOrExpCtx != nullptr) {
             tree::ParseTree* parent = varOrExpCtx->parent;
 
-            LuaParser::PrefixexpContext* peCtx = dynamic_cast<LuaParser::PrefixexpContext*>(parent);
+            LuaParser::PrefixexpContext* peCtx =
+                dynamic_cast<LuaParser::PrefixexpContext*>(parent);
             if (peCtx != nullptr) {
                 for (auto na : peCtx->nameAndArgs()) {
                     if (na->COLON() != nullptr) break;
@@ -1271,7 +1326,8 @@ void FormatVisitor::visitNextNameAndArgs(LuaParser::VarSuffixContext* ctx) {
                 }
             }
 
-            LuaParser::FunctioncallContext* fcCtx = dynamic_cast<LuaParser::FunctioncallContext*>(parent);
+            LuaParser::FunctioncallContext* fcCtx =
+                dynamic_cast<LuaParser::FunctioncallContext*>(parent);
             if (fcCtx != nullptr) {
                 for (auto na : fcCtx->nameAndArgs()) {
                     if (na->COLON() != nullptr) break;
@@ -1286,24 +1342,28 @@ void FormatVisitor::visitNextNameAndArgs(LuaParser::VarSuffixContext* ctx) {
 }
 
 // (COLON NAME)? args;
-antlrcpp::Any FormatVisitor::visitNameAndArgs(LuaParser::NameAndArgsContext* ctx) {
+antlrcpp::Any FormatVisitor::visitNameAndArgs(
+    LuaParser::NameAndArgsContext* ctx) {
     LOG_FUNCTION_BEGIN();
     if (ctx->COLON() != NULL) {
         bool beyondLimit = false;
         LuaParser::StringContext* stringContext = ctx->args()->string();
         bool needWhiteSpace = stringContext != NULL;
         if (!chainedMethodCallIsFirst_.back()) {
-            chainedMethodCallIsFirst_[chainedMethodCallIsFirst_.size() - 1] = true;
+            chainedMethodCallIsFirst_[chainedMethodCallIsFirst_.size() - 1] =
+                true;
         } else {
             pushWriterWithColumn();
             cur_writer() << ctx->COLON()->getText();
             cur_writer() << commentAfter(ctx->COLON(), "");
             cur_writer() << ctx->NAME()->getText();
-            cur_writer() << commentAfter(ctx->NAME(), needWhiteSpace ? " " : "");
+            cur_writer() << commentAfter(ctx->NAME(),
+                                         needWhiteSpace ? " " : "");
             visitArgs(ctx->args());
             int length = cur_writer().firstLineColumn();
             popWriter();
-            beyondLimit = cur_columns() + length > config_.get<int>("column_limit");
+            beyondLimit =
+                cur_columns() + length > config_.get<int>("column_limit");
         }
         if (beyondLimit) {
             cur_writer() << "\n";
@@ -1312,7 +1372,8 @@ antlrcpp::Any FormatVisitor::visitNameAndArgs(LuaParser::NameAndArgsContext* ctx
             } else {
                 incContinuationIndent();
                 cur_writer() << indentWithAlign();
-                chainedMethodCallHasIncIndent_[chainedMethodCallHasIncIndent_.size() - 1] = true;
+                chainedMethodCallHasIncIndent_
+                    [chainedMethodCallHasIncIndent_.size() - 1] = true;
             }
         }
         cur_writer() << ctx->COLON()->getText();
@@ -1336,7 +1397,9 @@ antlrcpp::Any FormatVisitor::visitArgs(LuaParser::ArgsContext* ctx) {
             bool beyondLimit = false;
             bool breakAfterLp = false;
             pushWriterWithColumn();
-            // if (!config_.get<bool>("break_before_functioncall_rp()) cur_writer") << "-";
+            // if (!config_.get<bool>("break_before_functioncall_rp())
+            // cur_writer") <<
+            // "-";
             cur_writer() << commentAfter(ctx->LP(), "");
             visitExplist(ctx->explist());
             cur_writer() << commentAfter(ctx->explist(), "");
@@ -1344,12 +1407,15 @@ antlrcpp::Any FormatVisitor::visitArgs(LuaParser::ArgsContext* ctx) {
             int lines = cur_writer().lines();
             if (!config_.get<bool>("break_before_functioncall_rp")) length++;
             popWriter();
-            beyondLimit = cur_columns() + length > config_.get<int>("column_limit");
-            if (beyondLimit || lines > 1) breakAfterLp = config_.get<bool>("break_after_functioncall_lp");
+            beyondLimit =
+                cur_columns() + length > config_.get<int>("column_limit");
+            if (beyondLimit || lines > 1)
+                breakAfterLp = config_.get<bool>("break_after_functioncall_lp");
             bool hasIncIndent = false;
             if (breakAfterLp) {
                 hasIncIndent = true;
-                cur_writer() << commentAfterNewLine(ctx->LP(), INC_CONTINUATION_INDENT);
+                cur_writer()
+                    << commentAfterNewLine(ctx->LP(), INC_CONTINUATION_INDENT);
                 cur_writer() << indentWithAlign();
             } else {
                 cur_writer() << commentAfter(ctx->LP(), "");
@@ -1357,7 +1423,8 @@ antlrcpp::Any FormatVisitor::visitArgs(LuaParser::ArgsContext* ctx) {
             visitExplist(ctx->explist());
             if (hasIncIndent) {
                 if (config_.get<bool>("break_before_functioncall_rp")) {
-                    cur_writer() << commentAfterNewLine(ctx->explist(), DEC_CONTINUATION_INDENT);
+                    cur_writer() << commentAfterNewLine(
+                        ctx->explist(), DEC_CONTINUATION_INDENT);
                     cur_writer() << indentWithAlign();
                 } else {
                     decContinuationIndent();
@@ -1379,7 +1446,8 @@ antlrcpp::Any FormatVisitor::visitArgs(LuaParser::ArgsContext* ctx) {
 }
 
 // FUNCTION funcbody;
-antlrcpp::Any FormatVisitor::visitFunctiondef(LuaParser::FunctiondefContext* ctx) {
+antlrcpp::Any FormatVisitor::visitFunctiondef(
+    LuaParser::FunctiondefContext* ctx) {
     LOG_FUNCTION_BEGIN();
     cur_writer() << ctx->FUNCTION()->getText();
     cur_writer() << commentAfter(ctx->FUNCTION(), "");
@@ -1407,12 +1475,14 @@ antlrcpp::Any FormatVisitor::visitFuncbody(LuaParser::FuncbodyContext* ctx) {
         int length = cur_writer().firstLineColumn();
         int lines = cur_writer().lines();
         popWriter();
-        beyondLimit = lines > 1 || cur_columns() + length > config_.get<int>("column_limit");
+        beyondLimit = lines > 1 ||
+                      cur_columns() + length > config_.get<int>("column_limit");
         if (beyondLimit) {
             breakAfterLp = config_.get<bool>("break_after_functiondef_lp");
         }
         if (breakAfterLp) {
-            cur_writer() << commentAfterNewLine(ctx->LP(), INC_CONTINUATION_INDENT);
+            cur_writer() << commentAfterNewLine(ctx->LP(),
+                                                INC_CONTINUATION_INDENT);
             cur_writer() << indent();
         } else {
             cur_writer() << commentAfter(ctx->LP(), "");
@@ -1422,7 +1492,8 @@ antlrcpp::Any FormatVisitor::visitFuncbody(LuaParser::FuncbodyContext* ctx) {
 
         if (config_.get<bool>("break_before_functiondef_rp")) {
             if (breakAfterLp) {
-                cur_writer() << commentAfterNewLine(ctx->parlist(), DEC_CONTINUATION_INDENT);
+                cur_writer() << commentAfterNewLine(ctx->parlist(),
+                                                    DEC_CONTINUATION_INDENT);
                 cur_writer() << indent();
             } else {
                 cur_writer() << commentAfter(ctx->parlist(), "");
@@ -1460,7 +1531,8 @@ antlrcpp::Any FormatVisitor::visitParlist(LuaParser::ParlistContext* ctx) {
 }
 
 // LB fieldlist? RB;
-antlrcpp::Any FormatVisitor::visitTableconstructor(LuaParser::TableconstructorContext* ctx) {
+antlrcpp::Any FormatVisitor::visitTableconstructor(
+    LuaParser::TableconstructorContext* ctx) {
     LOG_FUNCTION_BEGIN();
     cur_writer() << ctx->LB()->getText();
     // disable indentForAlign_ in table
@@ -1490,12 +1562,15 @@ antlrcpp::Any FormatVisitor::visitTableconstructor(LuaParser::TableconstructorCo
             int length = cur_writer().firstLineColumn();
             int lines = cur_writer().lines();
             popWriter();
-            beyondLimit = cur_columns() + length > config_.get<int>("column_table_limit") || lines > 1;
+            beyondLimit = cur_columns() + length >
+                              config_.get<int>("column_table_limit") ||
+                          lines > 1;
         }
         bool breakAfterLb = false;
         if (beyondLimit) {
             breakAfterLb = config_.get<bool>("break_after_table_lb");
-            chopDown = config_.get<bool>("chop_down_table") || (config_.get<bool>("chop_down_kv_table") && containsKv);
+            chopDown = config_.get<bool>("chop_down_table") ||
+                       (config_.get<bool>("chop_down_kv_table") && containsKv);
         }
         if (chopDown) {
             cur_writer() << commentAfterNewLine(ctx->LB(), INC_INDENT);
@@ -1511,16 +1586,20 @@ antlrcpp::Any FormatVisitor::visitTableconstructor(LuaParser::TableconstructorCo
             chop_down_table_ = false;
         }
         visitFieldlist(ctx->fieldlist());
-        bool needExtraFieldSep = config_.get<bool>("extra_sep_at_table_end") && ctx->fieldlist()->field().size() > 0;
+        bool needExtraFieldSep = config_.get<bool>("extra_sep_at_table_end") &&
+                                 ctx->fieldlist()->field().size() > 0;
         if (chopDown) {
-            if (needExtraFieldSep) cur_writer() << config_.get<string>("table_sep");
+            if (needExtraFieldSep)
+                cur_writer() << config_.get<string>("table_sep");
             cur_writer() << commentAfterNewLine(ctx->fieldlist(), DEC_INDENT);
             cur_writer() << indent();
         } else {
             if (breakAfterLb) {
                 if (config_.get<bool>("break_before_table_rb")) {
-                    if (needExtraFieldSep) cur_writer() << config_.get<string>("table_sep");
-                    cur_writer() << commentAfterNewLine(ctx->fieldlist(), DEC_INDENT);
+                    if (needExtraFieldSep)
+                        cur_writer() << config_.get<string>("table_sep");
+                    cur_writer()
+                        << commentAfterNewLine(ctx->fieldlist(), DEC_INDENT);
                     cur_writer() << indent();
                 } else {
                     decIndent();
@@ -1568,7 +1647,8 @@ antlrcpp::Any FormatVisitor::visitFieldlist(LuaParser::FieldlistContext* ctx) {
     for (unsigned int i = 1; i < n; i++) {
         if (chop_down_table_) {
             visitFieldsep(ctx->fieldsep()[i - 1]);
-            cur_writer() << commentAfterNewLine(ctx->fieldsep()[i - 1], NONE_INDENT);
+            cur_writer() << commentAfterNewLine(ctx->fieldsep()[i - 1],
+                                                NONE_INDENT);
             cur_writer() << indent();
             visitField(ctx->field()[i]);
             if (i != n - 1 || ctx->fieldsep().size() == n) {
@@ -1583,20 +1663,25 @@ antlrcpp::Any FormatVisitor::visitFieldlist(LuaParser::FieldlistContext* ctx) {
         visitField(ctx->field()[i]);
         int length = cur_writer().firstLineColumn();
         popWriter();
-        if (i != n - 1 || config_.get<bool>("extra_sep_at_table_end")) length++;  // calc a ',' if exp >1
-        beyondLimit = cur_columns() + length > config_.get<int>("column_table_limit");
+        if (i != n - 1 || config_.get<bool>("extra_sep_at_table_end"))
+            length++;  // calc a ',' if exp >1
+        beyondLimit =
+            cur_columns() + length > config_.get<int>("column_table_limit");
         if (beyondLimit) {
             if (config_.get<bool>("align_table_field")) {
-                cur_writer() << commentAfterNewLine(ctx->fieldsep()[i - 1], NONE_INDENT);
+                cur_writer()
+                    << commentAfterNewLine(ctx->fieldsep()[i - 1], NONE_INDENT);
                 for (int i = 0; i < firstTableFieldColumn_.back(); i++) {
                     cur_writer() << " ";
                 }
             } else {
                 if (hasIncIndent) {
-                    cur_writer() << commentAfterNewLine(ctx->fieldsep()[i - 1], NONE_INDENT);
+                    cur_writer() << commentAfterNewLine(ctx->fieldsep()[i - 1],
+                                                        NONE_INDENT);
                     cur_writer() << indent();
                 } else {
-                    cur_writer() << commentAfterNewLine(ctx->fieldsep()[i - 1], INC_INDENT);
+                    cur_writer() << commentAfterNewLine(ctx->fieldsep()[i - 1],
+                                                        INC_INDENT);
                     cur_writer() << indent();
                     customIncIndent = true;
                     hasIncIndent = true;
@@ -1647,7 +1732,8 @@ antlrcpp::Any FormatVisitor::visitField(LuaParser::FieldContext* ctx) {
     return nullptr;
 }
 
-antlrcpp::Any FormatVisitor::visitFieldsep(LuaParser::FieldsepContext* context) {
+antlrcpp::Any FormatVisitor::visitFieldsep(
+    LuaParser::FieldsepContext* context) {
     cur_writer() << config_.get<string>("table_sep");
     return nullptr;
 }
@@ -1665,11 +1751,14 @@ antlrcpp::Any FormatVisitor::visitTerminal(tree::TerminalNode* node) {
     return nullptr;
 }
 
-bool FormatVisitor::needKeepBlockOneLine(tree::ParseTree* previousNode, LuaParser::BlockContext* ctx,
+bool FormatVisitor::needKeepBlockOneLine(tree::ParseTree* previousNode,
+                                         LuaParser::BlockContext* ctx,
                                          BlockType blockType) {
-    if (blockType == CONTROL_BLOCK && !config_.get<bool>("keep_simple_control_block_one_line")) {
+    if (blockType == CONTROL_BLOCK &&
+        !config_.get<bool>("keep_simple_control_block_one_line")) {
         return false;
-    } else if (blockType == FUNCTION_BLOCK && !config_.get<bool>("keep_simple_function_one_line")) {
+    } else if (blockType == FUNCTION_BLOCK &&
+               !config_.get<bool>("keep_simple_function_one_line")) {
         return false;
     }
 
@@ -1698,7 +1787,8 @@ bool FormatVisitor::needKeepBlockOneLine(tree::ParseTree* previousNode, LuaParse
     int length = cur_writer().firstLineColumn();
     int lines = cur_writer().lines();
     popWriter();
-    if (cur_columns() + length > config_.get<int>("column_limit") || lines > 1) {
+    if (cur_columns() + length > config_.get<int>("column_limit") ||
+        lines > 1) {
         return false;
     }
     string postComment = commentAfter(ctx, "");
@@ -1712,7 +1802,8 @@ bool FormatVisitor::isBlockEmpty(LuaParser::BlockContext* ctx) {
     return ctx->stat().size() == 0 && ctx->retstat() == NULL;
 }
 
-void FormatVisitor::visitBlockAndComment(tree::ParseTree* previousNode, LuaParser::BlockContext* ctx,
+void FormatVisitor::visitBlockAndComment(tree::ParseTree* previousNode,
+                                         LuaParser::BlockContext* ctx,
                                          BlockType blockType) {
     LOG_FUNCTION_BEGIN();
     bool oneline = needKeepBlockOneLine(previousNode, ctx, blockType);
